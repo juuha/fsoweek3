@@ -56,11 +56,21 @@ app.post('/api/persons', (req, res) => {
     number: body.number
   })
 
-  person
-    .save()
-    .then(savedPerson => {
-        res.json(Person.format(savedPerson))
+  Person
+    .find({name: person.name})
+    .then(result => {
+      if (result) {
+        res.status(409).send({ error: "name already exists" })
+      } else {
+        person
+          .save()
+          .then(savedPerson => {
+              res.json(Person.format(savedPerson))
+          })
+      }
     })
+
+  
 })
 
 app.put('/api/persons/:id', (req, res) => {
