@@ -1,10 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const user = process.env.fsoweek3user || '<username>'
-const pass = process.env.fsoweek3pass || '<password>'
-
-const url = `mongodb://${user}:${pass}@ds139690.mlab.com:39690/puhelinnumerodb`
+const url = `mongodb://fsouser123:supersecret123@ds139690.mlab.com:39690/puhelinnumerodb`
 
 mongoose.connect(url, { useNewUrlParser: true })
 
