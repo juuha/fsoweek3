@@ -59,7 +59,7 @@ app.post('/api/persons', (req, res) => {
   Person
     .find({name: person.name})
     .then(result => {
-      if (result) {
+      if (result.length > 0) {
         res.status(409).send({ error: "name already exists" })
       } else {
         person
