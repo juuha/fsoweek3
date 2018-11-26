@@ -3,6 +3,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 app.use(cors())
 
@@ -45,18 +46,23 @@ let persons = [
 ]
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person
+    .find({})
+    .then(persons => {
+      res.json(persons.map(Person.format))
+    })
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const person = persons.find(pers => pers.id === id)
-
-  if (person){
-    res.json(person)
-  } else {
-    res.status(404).end()
-  }
+  Person
+    .findById(req.params.id)
+    .then(person => {
+      res.json(Person.format(person))
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(404).end()
+    })
 })
 
 app.post('/api/persons', (req, res) => {
@@ -66,19 +72,18 @@ app.post('/api/persons', (req, res) => {
     return res.status(400).json({error: 'name is missing'})
   } else if (body.number === undefined) {
     return res.status(400).json({error: 'number is missing'})
-  } else if (persons.find(pers => pers.name === body.name)) {
-    return res.status(400).json({error: 'name must be unique'})
   }
 
-  const person = {
+  const person = new Person({
     name: body.name,
-    number: body.number,
-    id: Math.floor(Math.random() * 1234567890)
-  }
+    number: body.number
+  })
 
-  persons = persons.concat(person)
-
-  res.json(person)
+  person
+    .save()
+    .then(savedPerson => {
+        res.json(Person.format(savedPerson))
+    })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -89,13 +94,15 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-  const henkilot = persons.length
-  res.send(
-    `
-    <p>puhelinluettelossa ${henkilot} henkilön tiedot</p>
-    <p>${new Date()}</p>
-    `
-  )
+  Person.find({}).then(persons => {
+    res.send(
+      `
+      <p>puhelinluettelossa ${persons.length} henkilön tiedot</p>
+      <p>${new Date()}</p>
+      `
+    )
+  })
+  
 })
 
 const PORT = process.env.PORT || 3001
