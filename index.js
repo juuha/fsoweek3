@@ -46,9 +46,9 @@ app.post('/api/persons', (req, res) => {
   const body = req.body
 
   if (body.name === undefined ){
-    return res.status(400).json({error: 'name is missing'})
+    return res.status(400).json({ error: 'name is missing' })
   } else if (body.number === undefined) {
-    return res.status(400).json({error: 'number is missing'})
+    return res.status(400).json({ error: 'number is missing' })
   }
 
   const person = new Person({
@@ -57,20 +57,20 @@ app.post('/api/persons', (req, res) => {
   })
 
   Person
-    .find({name: person.name})
+    .find({ name: person.name })
     .then(result => {
       if (result.length > 0) {
-        res.status(409).send({ error: "name already exists" })
+        res.status(409).send({ error: 'name already exists' })
       } else {
         person
           .save()
           .then(savedPerson => {
-              res.json(Person.format(savedPerson))
+            res.json(Person.format(savedPerson))
           })
       }
     })
 
-  
+
 })
 
 app.put('/api/persons/:id', (req, res) => {
@@ -92,10 +92,10 @@ app.put('/api/persons/:id', (req, res) => {
     })
 })
 
-app.delete('/api/persons/:id', (req, res) => {  
+app.delete('/api/persons/:id', (req, res) => {
   Person
     .findByIdAndRemove(req.params.id)
-    .then(result => {
+    .then( () => {
       res.status(204).end()
     })
     .catch(error => {

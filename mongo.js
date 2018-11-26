@@ -12,34 +12,35 @@ const Person = mongoose.model('Person', {
   number: String
 })
 
-switch (process.argv.length){
-  case 2:
-    console.log('puhelinluettelo:')
-    Person
-      .find({})
-      .then(result => {
-        result.forEach(person => {
-          console.log(`${person.name} ${person.number}`)
-        })
-        mongoose.connection.close()
-      })
-    break
-  case 4:
-      const person = new Person({
-      name: process.argv[2],
-      number: process.argv[3]
-    })
+const person = new Person({
+  name: process.argv[2],
+  number: process.argv[3]
+})
 
-    person
-      .save()
-      .then(response => {
-        console.log(`lisätään henkilö ${person.name} numero ${person.number} luetteloon`)
-        mongoose.connection.close()
+switch (process.argv.length){
+case 2:
+  console.log('puhelinluettelo:')
+  Person
+    .find({})
+    .then(result => {
+      result.forEach(person => {
+        console.log(`${person.name} ${person.number}`)
       })
-    break
-  default:
-    console.log('Syötä 0 tai 2 parametriä.')
-    mongoose.connection.close()
+      mongoose.connection.close()
+    })
+  break
+case 4:
+
+  person
+    .save()
+    .then( () => {
+      console.log(`lisätään henkilö ${person.name} numero ${person.number} luetteloon`)
+      mongoose.connection.close()
+    })
+  break
+default:
+  console.log('Syötä 0 tai 2 parametriä.')
+  mongoose.connection.close()
 }
 
 
